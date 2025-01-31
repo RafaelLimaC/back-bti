@@ -27,9 +27,10 @@ model Ticket {
 }
 
 model Status {
-  id        Int       @id @default(autoincrement())
-  acronym   String
-  name      String
+  id      Int    @id @default(autoincrement())
+  name    String @unique
+  acronym String
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -38,16 +39,17 @@ model Status {
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
-  ownerId   Int
-  content   String
+  id       Int    @id @default(autoincrement())
+  ownerId  Int
+  content  String
+  ticketId Int
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  ticketId Int
-  Ticket   Ticket @relation(fields: [ticketId], references: [id])
-  Owner    Owner  @relation(fields: [ownerId], references: [id])
+  Ticket Ticket @relation(fields: [ticketId], references: [id])
+  Owner  Owner  @relation(fields: [ownerId], references: [id])
 }
 
 model TicketOwner {
@@ -61,9 +63,10 @@ model TicketOwner {
 }
 
 model Owner {
-  id        Int       @id @default(autoincrement())
-  name      String
-  role      String?
+  id   Int     @id @default(autoincrement())
+  name String
+  role String?
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -83,10 +86,11 @@ model TicketCreator {
 }
 
 model Creator {
-  id        Int       @id @default(autoincrement())
-  name      String
-  role      String?
-  sector    String
+  id     Int     @id @default(autoincrement())
+  name   String
+  role   String?
+  sector String
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
