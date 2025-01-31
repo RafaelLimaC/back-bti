@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Ticket {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  statusId    Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  TicketOwner   TicketOwner[]
+  TicketCreator TicketCreator[]
+  Comment       Comment[]
+  Status        Status          @relation(fields: [statusId], references: [id])
+}
+
+model Status {
+  id        Int       @id @default(autoincrement())
+  acronym   String
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  Ticket Ticket[]
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  ownerId   Int
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  ticketId Int
+  Ticket   Ticket @relation(fields: [ticketId], references: [id])
+  Owner    Owner  @relation(fields: [ownerId], references: [id])
+}
+
+model TicketOwner {
+  ticketId Int
+  ownerId  Int
+
+  Ticket Ticket @relation(fields: [ticketId], references: [id])
+  Owner  Owner  @relation(fields: [ownerId], references: [id])
+
+  @@id([ticketId, ownerId])
+}
+
+model Owner {
+  id        Int       @id @default(autoincrement())
+  name      String
+  role      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  TicketOwner TicketOwner[]
+  Comment     Comment[]
+}
+
+model TicketCreator {
+  ticketId  Int
+  creatorId Int
+
+  Ticket  Ticket  @relation(fields: [ticketId], references: [id])
+  Creator Creator @relation(fields: [creatorId], references: [id])
+
+  @@id([creatorId, ticketId])
+}
+
+model Creator {
+  id        Int       @id @default(autoincrement())
+  name      String
+  role      String?
+  sector    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  TicketCreator TicketCreator[]
+}
