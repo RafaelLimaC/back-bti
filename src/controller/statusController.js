@@ -1,7 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-import { response } from 'express';
-
-const prisma = new PrismaClient();
+import { createStatusService, deleteStatusService, getStatusService, updateStatusService } from '../services/statusServices.js';
 
 const createStatus = async (req, res) => {
   try {
@@ -9,80 +6,47 @@ const createStatus = async (req, res) => {
       return res.status(422).json({ error: 'Missing required field' });
     }
 
-    if (await prisma.status.findUnique({ where: { name: req.body.name } })) {
-      return res.status(409).json({ error: `'Status ${req.body.name} already exists'` });
-    }
+    const response = await createStatusService(req.body.name, req.body.acronym);
 
-    const newStatus = await prisma.status.create({
-      data: {
-        name: req.body.name,
-        acronym: req.body.acronym
-      }
-    })
-
-    return res.status(201).json(newStatus)
+    return res.status(201).json(response)
 
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 }
 
 const getStatus = async (req, res) => {
   try {
-    const status = await prisma.status.findMany();
+    const response = await getStatusService(req, res);
 
-    return res.status(200).json(status);
+    return res.status(200).json(response);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 }
 
 const updateStatus = async (req, res) => {
   try {
-    if (!await prisma.status.findUnique({ where: { id: parseInt(req.params.id) } })) {
-      return response.status(404).json({ error: error.message });
-    }
-
     if (!req.body.name) {
       return res.status(422).json({ error: 'Missing required field' });
     }
 
-    if (await prisma.status.findUnique({ where: { name: req.body.name } })) {
-      return res.status(409).json({ error: `'Status ${req.body.name} already exists'` });
-    }
-
-    const updatedStaus = await prisma.status.update({
-      data: {
-        name: req.body.name
-      },
-      where: {
-        id: parseInt(req.params.id)
-      }
-    })
-
-    return res.status(200).json(updatedStaus)
+    const response = await updateStatusService(req.body.name, Number(req.params.id))
+    return res.status(200).json(response)
 
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 }
 
 const deleteStatus = async (req, res) => {
   try {
-    if (!await prisma.status.findUnique({ where: { id: parseInt(req.params.id) } })) {
-      return response.status(404).json({ error: error.message });
-    }
-
-    await prisma.status.delete({
-      where: {
-        id: parseInt(req.params.id)
-      }
-    })
+    const response = await deleteStatusService(Number(req.params.id))
 
     return res.status(204).send();
 
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error });
   }
 }
 
