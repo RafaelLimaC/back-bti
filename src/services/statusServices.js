@@ -22,7 +22,7 @@ const getStatusService = async () => {
 }
 
 const updateStatusService = async (name, id) => {
-  if (!await prisma.status.findUnique({ where: { id: Number(id) } })) {
+  if (!await prisma.status.findUnique({ where: { id: id } })) {
     throw new Error("Status not found");
   }
 
@@ -35,7 +35,7 @@ const updateStatusService = async (name, id) => {
       name: name
     },
     where: {
-      id: Number(id)
+      id: id
     }
   })
 
@@ -43,7 +43,7 @@ const updateStatusService = async (name, id) => {
 }
 
 const deleteStatusService = async (id) => {
-  if (!await prisma.status.findUnique({ where: { id: Number(id) } })) {
+  if (!await prisma.status.findUnique({ where: { id: id } })) {
     throw new Error("Status not found");
   }
 
