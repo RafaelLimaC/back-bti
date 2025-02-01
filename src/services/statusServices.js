@@ -47,6 +47,16 @@ const deleteStatusService = async (id) => {
     throw new Error("Status not found");
   }
 
+  const statusCount = await prisma.ticket.count({
+    where: {
+      statusId: id
+    }
+  })
+
+  if (statusCount > 0) {
+    throw new Error(`Status is being used in ${statusCount} tickets.`);
+  }
+
   await prisma.status.delete({
     where: {
       id: id

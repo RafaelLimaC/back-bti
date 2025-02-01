@@ -1,7 +1,6 @@
 import { prisma } from '../config/prisma.js';
 
 const createOwnerService = async (name, role) => {
-
   const newOwner = await prisma.Owner.create({
     data: {
       name: name,

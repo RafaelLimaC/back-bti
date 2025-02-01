@@ -23,7 +23,7 @@ model Ticket {
   TicketOwner   TicketOwner[]
   TicketCreator TicketCreator[]
   Comment       Comment[]
-  Status        Status          @relation(fields: [statusId], references: [id])
+  Status        Status          @relation(fields: [statusId], references: [id], onDelete: Cascade)
 }
 
 model Status {
@@ -48,7 +48,7 @@ model Comment {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  Ticket Ticket @relation(fields: [ticketId], references: [id])
+  Ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   Owner  Owner  @relation(fields: [ownerId], references: [id])
 }
 
@@ -56,7 +56,7 @@ model TicketOwner {
   ticketId Int
   ownerId  Int
 
-  Ticket Ticket @relation(fields: [ticketId], references: [id])
+  Ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   Owner  Owner  @relation(fields: [ownerId], references: [id])
 
   @@id([ticketId, ownerId])
@@ -79,7 +79,7 @@ model TicketCreator {
   ticketId  Int
   creatorId Int
 
-  Ticket  Ticket  @relation(fields: [ticketId], references: [id])
+  Ticket  Ticket  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   Creator Creator @relation(fields: [creatorId], references: [id])
 
   @@id([creatorId, ticketId])

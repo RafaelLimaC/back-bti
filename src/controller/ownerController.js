@@ -20,6 +20,7 @@ const getOwner = async (req, res) => {
     const response = await getOwnerService(req, res);
 
     return res.status(200).json(response);
+
   } catch (error) {
     return res.status(500).json({ error });
   }
@@ -28,6 +29,7 @@ const getOwner = async (req, res) => {
 const updateOwner = async (req, res) => {
   try {
     const response = await updateOwnerService(req.body.name, req.body.role, Number(req.params.id))
+
     return res.status(200).json(response)
 
   } catch (error) {

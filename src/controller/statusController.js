@@ -20,6 +20,7 @@ const getStatus = async (req, res) => {
     const response = await getStatusService(req, res);
 
     return res.status(200).json(response);
+
   } catch (error) {
     return res.status(500).json({ error });
   }
@@ -32,6 +33,7 @@ const updateStatus = async (req, res) => {
     }
 
     const response = await updateStatusService(req.body.name, Number(req.params.id))
+
     return res.status(200).json(response)
 
   } catch (error) {
@@ -46,6 +48,10 @@ const deleteStatus = async (req, res) => {
     return res.status(204).send();
 
   } catch (error) {
+    if (error.message.includes('Status is being used in')) {
+      return res.status(409).json({ error: error.message });
+    }
+
     return res.status(500).json({ error });
   }
 }
