@@ -1,11 +1,17 @@
 import { Router } from 'express';
-import { createOwner, deleteOwner, getOwner, updateOwner } from '../controller/ownerController.js';
 
-const router = Router();
+import {
+  createOwner,
+  deleteOwner,
+  getOwner,
+  updateOwner,
+} from '../controller/ownerController.js';
 
-router.post('/', createOwner);
-router.get('/', getOwner);
-router.put('/:id', updateOwner)
-router.delete('/:id', deleteOwner)
+const ownerRouter = Router();
 
-export default router;
+ownerRouter.post('/', createOwner);
+ownerRouter.get('/', getOwner);
+ownerRouter.put('/:id', updateOwner);
+ownerRouter.delete('/:id', deleteOwner);
+
+export { ownerRouter };

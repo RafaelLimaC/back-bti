@@ -1,51 +1,55 @@
 import { prisma } from '../config/prisma.js';
 
-const createOwnerService = async (name, role) => {
-  const newOwner = await prisma.Owner.create({
+const createOwnerService = async (name: string, role: string) => {
+  const newOwner = await prisma.owner.create({
     data: {
       name: name,
-      role: role
-    }
-  })
+      role: role,
+    },
+  });
 
   return newOwner;
-}
+};
 
 const getOwnerService = async () => {
   const owner = await prisma.owner.findMany();
 
   return owner;
-}
+};
 
-const updateOwnerService = async (name, role, id) => {
-  if (!await prisma.owner.findUnique({ where: { id: id } })) {
-    throw new Error("Owner not found");
+const updateOwnerService = async (name: string, role: string, id: number) => {
+  if (!(await prisma.owner.findUnique({ where: { id: id } }))) {
+    throw new Error('Owner not found');
   }
 
   const updatedOwner = await prisma.owner.update({
     data: {
       name: name,
-      role: role
+      role: role,
     },
     where: {
-      id: Number(id)
-    }
-  })
+      id: Number(id),
+    },
+  });
 
-  return updatedOwner
-}
+  return updatedOwner;
+};
 
-const deleteOwnerService = async (id) => {
-  if (!await prisma.owner.findUnique({ where: { id: id } })) {
-    throw new Error("Owner not found");
+const deleteOwnerService = async (id: number) => {
+  if (!(await prisma.owner.findUnique({ where: { id: id } }))) {
+    throw new Error('Owner not found');
   }
 
   await prisma.owner.delete({
     where: {
-      id: id
-    }
-  })
-}
+      id,
+    },
+  });
+};
 
-export { createOwnerService, deleteOwnerService, getOwnerService, updateOwnerService };
-
+export {
+  createOwnerService,
+  deleteOwnerService,
+  getOwnerService,
+  updateOwnerService,
+};

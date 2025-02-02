@@ -1,6 +1,6 @@
 import { prisma } from '../config/prisma.js';
 
-const createStatusService = async (name, acronym) => {
+const createStatusService = async (name: string, acronym: string) => {
   if (await prisma.status.findUnique({ where: { name: name } })) {
     throw new Error(`Status ${name} already exists`);
   }
@@ -8,50 +8,50 @@ const createStatusService = async (name, acronym) => {
   const newStatus = await prisma.status.create({
     data: {
       name: name,
-      acronym: acronym
-    }
-  })
+      acronym: acronym,
+    },
+  });
 
   return newStatus;
-}
+};
 
 const getStatusService = async () => {
   const status = await prisma.status.findMany();
 
   return status;
-}
+};
 
-const updateStatusService = async (name, id) => {
-  if (!await prisma.status.findUnique({ where: { id: id } })) {
-    throw new Error("Status not found");
+const updateStatusService = async (name: string, id: number) => {
+  if (!(await prisma.status.findUnique({ where: { id } }))) {
+    throw new Error('Status not found');
   }
 
-  if (await prisma.status.findUnique({ where: { name: name } })) {
-    throw new Error(`Status ${name} already exists`)
+  if (await prisma.status.findUnique({ where: { name } })) {
+    throw new Error(`Status ${name} already exists`);
   }
 
   const updatedStatus = await prisma.status.update({
     data: {
-      name: name
+      name,
     },
     where: {
-      id: id
-    }
-  })
+      id,
+    },
+  });
 
-  return updatedStatus
-}
+  return updatedStatus;
+};
 
-const deleteStatusService = async (id) => {
-  if (!await prisma.status.findUnique({ where: { id: id } })) {
-    throw new Error("Status not found");
+const deleteStatusService = async (id: number) => {
+  if (!(await prisma.status.findUnique({ where: { id } }))) {
+    throw new Error('Status not found');
   }
 
   const statusCount = await prisma.ticket.count({
     where: {
-      statusId: id
-    }
-  })
+      statusId: id,
+    },
+  });
 
   if (statusCount > 0) {
     throw new Error(`Status is being used in ${statusCount} tickets.`);
@@ -59,11 +59,14 @@ const deleteStatusService = async (id) => {
 
   await prisma.status.delete({
     where: {
-      id: id
-    }
-  })
-}
+      id: id,
+    },
+  });
+};
 
-
-export { createStatusService, deleteStatusService, getStatusService, updateStatusService };
-
+export {
+  createStatusService,
+  deleteStatusService,
+  getStatusService,
+  updateStatusService,
+};

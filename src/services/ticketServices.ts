@@ -1,18 +1,34 @@
 import { prisma } from '../config/prisma.js';
 
-const createTicketService = async (title, description, statusId, ownerId, creatorId) => {
-  const statusExists = await prisma.status.findUnique({ where: { id: Number(statusId) } });
+const createTicketService = async (
+  title: string,
+  description: string,
+  statusId: number,
+  ownerId: number,
+  creatorId: number,
+) => {
+  const statusExists = await prisma.status.findUnique({
+    where: { id: Number(statusId) },
+  });
 
   if (!statusExists) {
-    throw new Error("Status id not found");
+    throw new Error('Status id not found');
   }
 
   const ticketData = {
     title,
     description,
     statusId: Number(statusId),
-    TicketOwner: Array.isArray(ownerId) ? { create: ownerId.map(id => ({ ownerId: id })) } : ownerId ? { create: [{ ownerId }] } : undefined,
-    TicketCreator: Array.isArray(creatorId) ? { create: creatorId.map(id => ({ creatorId: id })) } : creatorId ? { create: [{ creatorId }] } : undefined,
+    TicketOwner: Array.isArray(ownerId)
+      ? { create: ownerId.map((id) => ({ ownerId: id })) }
+      : ownerId
+        ? { create: [{ ownerId }] }
+        : undefined,
+    TicketCreator: Array.isArray(creatorId)
+      ? { create: creatorId.map((id) => ({ creatorId: id })) }
+      : creatorId
+        ? { create: [{ creatorId }] }
+        : undefined,
   };
 
   const newTicket = await prisma.ticket.create({
@@ -24,7 +40,7 @@ const createTicketService = async (title, description, statusId, ownerId, creato
   });
 
   return newTicket;
-}
+};
 
 const getTicketsService = async () => {
   const tickets = await prisma.ticket.findMany({
@@ -35,9 +51,9 @@ const getTicketsService = async () => {
   });
 
   return tickets;
-}
+};
 
-const getTicketByIdService = async (id) => {
+const getTicketByIdService = async (id: number) => {
   const ticket = await prisma.ticket.findUnique({
     where: {
       id: id,
@@ -53,11 +69,11 @@ const getTicketByIdService = async (id) => {
   }
 
   return ticket;
-}
+};
 
-const getTicketByStatusService = async (statusId) => {
-  if (!await prisma.status.findUnique({ where: { id: statusId } })) {
-    throw new Error("Status id not found");
+const getTicketByStatusService = async (statusId: number) => {
+  if (!(await prisma.status.findUnique({ where: { id: statusId } }))) {
+    throw new Error('Status id not found');
   }
 
   const tickets = await prisma.ticket.findMany({
@@ -70,16 +86,22 @@ const getTicketByStatusService = async (statusId) => {
     },
     orderBy: {
       createdAt: 'desc',
-    }
+    },
   });
 
   return tickets;
-}
+};
 
-const updateTicketService = async (title, description, statusId, ticketId, ownerId, creatorId) => {
-
-  if (!await prisma.ticket.findUnique({ where: { id: ticketId } })) {
-    throw new Error("Ticket id not found");
+const updateTicketService = async (
+  title: string,
+  description: string,
+  statusId: number,
+  ticketId: number,
+  ownerId: number,
+  creatorId: number,
+) => {
+  if (!(await prisma.ticket.findUnique({ where: { id: ticketId } }))) {
+    throw new Error('Ticket id not found');
   }
 
   const updatedTicket = await prisma.ticket.update({
@@ -88,38 +110,42 @@ const updateTicketService = async (title, description, statusId, ticketId, owner
       title: title,
       description: description,
       statusId: statusId,
-      TicketOwner: ownerId ? {
-        upsert: {
-          create: {
-            ownerId,
-          },
-          update: {
-            ownerId,
-          },
-          where: {
-            ticketId_ownerId: {
-              ownerId,
-              ticketId,
-            }
-          },
-        }
-      } : undefined,
-      TicketCreator: creatorId ? {
-        upsert: {
-          create: {
-            creatorId,
-          },
-          update: {
-            creatorId,
-          },
-          where: {
-            creatorId_ticketId: {
-              creatorId,
-              ticketId,
-            }
-          },
-        }
-      } : undefined,
+      TicketOwner: ownerId
+        ? {
+            upsert: {
+              create: {
+                ownerId,
+              },
+              update: {
+                ownerId,
+              },
+              where: {
+                ticketId_ownerId: {
+                  ownerId,
+                  ticketId,
+                },
+              },
+            },
+          }
+        : undefined,
+      TicketCreator: creatorId
+        ? {
+            upsert: {
+              create: {
+                creatorId,
+              },
+              update: {
+                creatorId,
+              },
+              where: {
+                creatorId_ticketId: {
+                  creatorId,
+                  ticketId,
+                },
+              },
+            },
+          }
+        : undefined,
     },
     include: {
       TicketOwner: true,
@@ -128,17 +154,31 @@ const updateTicketService = async (title, description, statusId, ticketId, owner
   });
 
   return updatedTicket;
-}
+};
 
-const deleteTicketService = async (id) => {
-  await prisma.ticket.delete({
+const deleteTicketService = async (id: number) => {
+  const ticketExists = await prisma.ticket.findFirst({
     where: {
-      id: id,
+      id,
     },
   });
-}
 
+  if (!ticketExists) {
+    throw new Error('Ticket does not exists');
+  }
 
+  await prisma.ticket.delete({
+    where: {
+      id,
+    },
+  });
+};
 
-export { createTicketService, deleteTicketService, getTicketByIdService, getTicketByStatusService, getTicketsService, updateTicketService };
-
+export {
+  createTicketService,
+  deleteTicketService,
+  getTicketByIdService,
+  getTicketByStatusService,
+  getTicketsService,
+  updateTicketService,
+};

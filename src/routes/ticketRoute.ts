@@ -1,13 +1,21 @@
 import { Router } from 'express';
-import { createTicket, deleteTicket, getTicketById, getTicketByStatus, getTickets, updateTicket } from '../controller/ticketController.js';
 
-const router = Router();
+import {
+  createTicket,
+  deleteTicket,
+  getTicketById,
+  getTicketByStatus,
+  getTickets,
+  updateTicket,
+} from '../controller/ticketController.js';
 
-router.post('/', createTicket);
-router.get('/', getTickets);
-router.get('/:id', getTicketById);
-router.put('/:id', updateTicket);
-router.delete('/:id', deleteTicket);
-router.get('/status/:statusId', getTicketByStatus);
+const ticketRouter = Router();
 
-export default router;
+ticketRouter.post('/', createTicket);
+ticketRouter.get('/', getTickets);
+ticketRouter.get('/:id', getTicketById);
+ticketRouter.put('/:id', updateTicket);
+ticketRouter.delete('/:id', deleteTicket);
+ticketRouter.get('/status/:statusId', getTicketByStatus);
+
+export { ticketRouter };
