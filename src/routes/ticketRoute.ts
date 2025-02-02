@@ -7,7 +7,7 @@ import {
   getTicketByStatus,
   getTickets,
   updateTicket,
-} from '@/controller/ticketController.js';
+} from '@/controller/ticketController';
 
 const ticketRouter = Router();
 

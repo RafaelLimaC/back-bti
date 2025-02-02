@@ -1,6 +1,6 @@
-import { prisma } from '../config/prisma.js';
+import { prisma } from '@/config/prisma';
 
-const createTicketService = async (
+export const createTicketService = async (
   title: string,
   description: string,
   statusId: number,
@@ -42,7 +42,7 @@ const createTicketService = async (
   return newTicket;
 };
 
-const getTicketsService = async () => {
+export const getTicketsService = async () => {
   const tickets = await prisma.ticket.findMany({
     include: {
       TicketOwner: true,
@@ -53,7 +53,7 @@ const getTicketsService = async () => {
   return tickets;
 };
 
-const getTicketByIdService = async (id: number) => {
+export const getTicketByIdService = async (id: number) => {
   const ticket = await prisma.ticket.findUnique({
     where: {
       id: id,
@@ -71,7 +71,7 @@ const getTicketByIdService = async (id: number) => {
   return ticket;
 };
 
-const getTicketByStatusService = async (statusId: number) => {
+export const getTicketByStatusService = async (statusId: number) => {
   if (!(await prisma.status.findUnique({ where: { id: statusId } }))) {
     throw new Error('Status id not found');
   }
@@ -92,7 +92,7 @@ const getTicketByStatusService = async (statusId: number) => {
   return tickets;
 };
 
-const updateTicketService = async (
+export const updateTicketService = async (
   title: string,
   description: string,
   statusId: number,
@@ -156,7 +156,7 @@ const updateTicketService = async (
   return updatedTicket;
 };
 
-const deleteTicketService = async (id: number) => {
+export const deleteTicketService = async (id: number) => {
   const ticketExists = await prisma.ticket.findFirst({
     where: {
       id,
@@ -172,13 +172,4 @@ const deleteTicketService = async (id: number) => {
       id,
     },
   });
-};
-
-export {
-  createTicketService,
-  deleteTicketService,
-  getTicketByIdService,
-  getTicketByStatusService,
-  getTicketsService,
-  updateTicketService,
 };

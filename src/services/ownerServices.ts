@@ -1,6 +1,6 @@
-import { prisma } from '../config/prisma.js';
+import { prisma } from '@/config/prisma';
 
-const createOwnerService = async (name: string, role: string) => {
+export const createOwnerService = async (name: string, role: string) => {
   const newOwner = await prisma.owner.create({
     data: {
       name: name,
@@ -11,13 +11,17 @@ const createOwnerService = async (name: string, role: string) => {
   return newOwner;
 };
 
-const getOwnerService = async () => {
+export const getOwnerService = async () => {
   const owner = await prisma.owner.findMany();
 
   return owner;
 };
 
-const updateOwnerService = async (name: string, role: string, id: number) => {
+export const updateOwnerService = async (
+  name: string,
+  role: string,
+  id: number,
+) => {
   if (!(await prisma.owner.findUnique({ where: { id: id } }))) {
     throw new Error('Owner not found');
   }
@@ -35,7 +39,7 @@ const updateOwnerService = async (name: string, role: string, id: number) => {
   return updatedOwner;
 };
 
-const deleteOwnerService = async (id: number) => {
+export const deleteOwnerService = async (id: number) => {
   if (!(await prisma.owner.findUnique({ where: { id: id } }))) {
     throw new Error('Owner not found');
   }
@@ -45,11 +49,4 @@ const deleteOwnerService = async (id: number) => {
       id,
     },
   });
-};
-
-export {
-  createOwnerService,
-  deleteOwnerService,
-  getOwnerService,
-  updateOwnerService,
 };

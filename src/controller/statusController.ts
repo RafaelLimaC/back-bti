@@ -5,7 +5,7 @@ import {
   deleteStatusService,
   getStatusService,
   updateStatusService,
-} from '../services/statusServices.js';
+} from '@/services/statusServices';
 
 const createStatus = async (req: Request, res: Response): Promise<Response> => {
   try {

@@ -5,7 +5,7 @@ import {
   deleteOwnerService,
   getOwnerService,
   updateOwnerService,
-} from '../services/ownerServices.js';
+} from '@/services/ownerServices';
 
 const createOwner = async (req: Request, res: Response): Promise<Response> => {
   try {

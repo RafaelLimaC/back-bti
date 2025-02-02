@@ -1,6 +1,6 @@
-import { prisma } from '../config/prisma.js';
+import { prisma } from '@/config/prisma';
 
-const createStatusService = async (name: string, acronym: string) => {
+export const createStatusService = async (name: string, acronym: string) => {
   if (await prisma.status.findUnique({ where: { name: name } })) {
     throw new Error(`Status ${name} already exists`);
   }
@@ -15,13 +15,13 @@ const createStatusService = async (name: string, acronym: string) => {
   return newStatus;
 };
 
-const getStatusService = async () => {
+export const getStatusService = async () => {
   const status = await prisma.status.findMany();
 
   return status;
 };
 
-const updateStatusService = async (name: string, id: number) => {
+export const updateStatusService = async (name: string, id: number) => {
   if (!(await prisma.status.findUnique({ where: { id } }))) {
     throw new Error('Status not found');
   }
@@ -42,7 +42,7 @@ const updateStatusService = async (name: string, id: number) => {
   return updatedStatus;
 };
 
-const deleteStatusService = async (id: number) => {
+export const deleteStatusService = async (id: number) => {
   if (!(await prisma.status.findUnique({ where: { id } }))) {
     throw new Error('Status not found');
   }
@@ -62,11 +62,4 @@ const deleteStatusService = async (id: number) => {
       id: id,
     },
   });
-};
-
-export {
-  createStatusService,
-  deleteStatusService,
-  getStatusService,
-  updateStatusService,
 };

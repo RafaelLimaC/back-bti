@@ -7,7 +7,7 @@ import {
   getTicketByStatusService,
   getTicketsService,
   updateTicketService,
-} from '../services/ticketServices.js';
+} from '@/services/ticketServices';
 
 const createTicket = async (req: Request, res: Response): Promise<Response> => {
   try {

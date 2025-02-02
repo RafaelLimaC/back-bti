@@ -5,7 +5,7 @@ import {
   deleteOwner,
   getOwner,
   updateOwner,
-} from '../controller/ownerController.js';
+} from '@/controller/ownerController';
 
 const ownerRouter = Router();
 

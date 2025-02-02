@@ -5,7 +5,7 @@ import {
   deleteStatus,
   getStatus,
   updateStatus,
-} from '../controller/statusController.js';
+} from '../controller/statusController';
 
 const statusRouter = Router();
 

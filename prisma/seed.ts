@@ -23,7 +23,11 @@ async function main() {
   });
 
   await prisma.sector.createMany({
-    data: [{ name: 'TI' }, { name: 'Negócios' }, { name: 'Marketing' }],
+    data: [
+      { name: 'Back Office TI', acronym: 'BACK_OFFICE_TI' },
+      { name: 'Media Transfer', acronym: 'MEDIA_TRANSFER' },
+      { name: 'Criação e Design', acronym: 'CRIACAO_DESIGN' },
+    ],
   });
 
   const sectors = await prisma.sector.findMany();
