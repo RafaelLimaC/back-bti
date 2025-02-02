@@ -3,8 +3,8 @@ import { prisma } from '@/config/prisma';
 export const createOwnerService = async (name: string, role: string) => {
   const newOwner = await prisma.owner.create({
     data: {
-      name: name,
-      role: role,
+      name,
+      role,
     },
   });
 
@@ -22,17 +22,17 @@ export const updateOwnerService = async (
   role: string,
   id: number,
 ) => {
-  if (!(await prisma.owner.findUnique({ where: { id: id } }))) {
+  if (!(await prisma.owner.findUnique({ where: { id } }))) {
     throw new Error('Owner not found');
   }
 
   const updatedOwner = await prisma.owner.update({
     data: {
-      name: name,
-      role: role,
+      name,
+      role,
     },
     where: {
-      id: Number(id),
+      id,
     },
   });
 
@@ -40,7 +40,7 @@ export const updateOwnerService = async (
 };
 
 export const deleteOwnerService = async (id: number) => {
-  if (!(await prisma.owner.findUnique({ where: { id: id } }))) {
+  if (!(await prisma.owner.findUnique({ where: { id } }))) {
     throw new Error('Owner not found');
   }
 
