@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { createTicketService, deleteTicketService, getTicketByIdService, getTicketByStatusService, getTicketsService, updateTicketService } from '../services/ticketServices.js';
 
-const prisma = new PrismaClient();
 
 const createTicket = async (req, res) => {
   try {
@@ -10,29 +9,10 @@ const createTicket = async (req, res) => {
       return res.status(422).json({ error: 'Missing required field' });
     }
 
-    const statusExists = await prisma.status.findUnique({ where: { id: Number(statusId) } });
+    const response = await createTicketService(title, description, statusId, ownerId, creatorId);
 
-    if (!statusExists) {
-      return res.status(404).json({ error: "Status id not found" });
-    }
+    return res.status(201).json(response);
 
-    const ticketData = {
-      title,
-      description,
-      statusId: Number(statusId),
-      TicketOwner: Array.isArray(ownerId) ? { create: ownerId.map(id => ({ ownerId: id })) } : ownerId ? { create: [{ ownerId }] } : undefined,
-      TicketCreator: Array.isArray(creatorId) ? { create: creatorId.map(id => ({ creatorId: id })) } : creatorId ? { create: [{ creatorId }] } : undefined,
-    };
-
-    const newTicket = await prisma.ticket.create({
-      data: ticketData,
-      include: {
-        TicketOwner: true,
-        TicketCreator: true,
-      },
-    });
-
-    return res.status(201).json(newTicket);
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -40,13 +20,10 @@ const createTicket = async (req, res) => {
 
 const getTickets = async (req, res) => {
   try {
-    const tickets = await prisma.ticket.findMany({
-      include: {
-        TicketOwner: true,
-        TicketCreator: true,
-      },
-    });
-    return res.status(200).json(tickets);
+    const response = await getTicketsService();
+
+    return res.status(200).json(response);
+
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -54,86 +31,47 @@ const getTickets = async (req, res) => {
 
 const getTicketById = async (req, res) => {
   try {
-    const ticket = await prisma.ticket.findUnique({
-      where: {
-        id: Number(req.params.id),
-      },
-      include: {
-        TicketOwner: true,
-        TicketCreator: true,
-      },
-    });
+    const id = Number(req.params.id)
 
-    if (!ticket) {
-      return res.status(404).json({ error: 'Ticket not found' });
-    }
+    const response = await getTicketByIdService(id);
 
-    return res.status(200).json(ticket);
+    return res.status(200).json(response);
+
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
+const getTicketByStatus = async (req, res) => {
+  try {
+    const statusId = Number(req.params.statusId)
+
+    const response = await getTicketByStatusService(statusId)
+
+    return res.status(200).json(response);
+
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 const updateTicket = async (req, res) => {
   try {
+    const title = req.body.title;
+    const description = req.body.description
+    const statusId = req.body.statusId
     const ticketId = Number(req.params.id);
     const ownerId = Number(req.body.ownerId)
     const creatorId = Number(req.body.creatorId)
 
-    if (req.body.title === undefined && req.body.statusId === undefined && req.body.description === undefined) {
+    if (title === undefined && statusId === undefined && description === undefined) {
       return res.status(422).json({ error: 'Missing required field' });
     }
 
-    if (!await prisma.ticket.findUnique({ where: { id: ticketId } })) {
-      return res.status(404).json({ error: "Ticket id not found" });
-    }
+    const response = await updateTicketService(title, description, statusId, ticketId, ownerId, creatorId)
 
-    const updatedTicket = await prisma.ticket.update({
-      where: { id: ticketId },
-      data: {
-        title: req.body.title,
-        description: req.body.description,
-        statusId: req.body.statusId,
-        TicketOwner: req.body.ownerId ? {
-          upsert: {
-            create: {
-              ownerId,
-            },
-            update: {
-              ownerId,
-            },
-            where: {
-              ticketId_ownerId: {
-                ownerId,
-                ticketId,
-              }
-            },
-          }
-        } : undefined,
-        TicketCreator: req.body.creatorId ? {
-          upsert: {
-            create: {
-              creatorId,
-            },
-            update: {
-              creatorId,
-            },
-            where: {
-              creatorId_ticketId: {
-                creatorId,
-                ticketId,
-              }
-            },
-          }
-        } : undefined,
-      },
-      include: {
-        TicketOwner: true,
-        TicketCreator: true,
-      },
-    });
+    return res.status(200).json(response);
 
-    return res.status(200).json(updatedTicket);
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -141,11 +79,9 @@ const updateTicket = async (req, res) => {
 
 const deleteTicket = async (req, res) => {
   try {
-    await prisma.ticket.delete({
-      where: {
-        id: Number(req.params.id),
-      },
-    });
+    const id = Number(req.params.id)
+
+    const response = await deleteTicketService(id)
 
     return res.status(204).send();
 
@@ -154,31 +90,6 @@ const deleteTicket = async (req, res) => {
       return res.status(404).json({ error: 'Ticket not found' });
     }
 
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-}
-
-const getTicketByStatus = async (req, res) => {
-  try {
-    if (!await prisma.status.findUnique({ where: { id: Number(req.params.statusId) } })) {
-      return res.status(404).json({ error: "Status id not found" });
-    }
-
-    const tickets = await prisma.ticket.findMany({
-      where: {
-        statusId: Number(req.params.statusId),
-      },
-      include: {
-        TicketOwner: true,
-        TicketCreator: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      }
-    });
-
-    return res.status(200).json(tickets);
-  } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
