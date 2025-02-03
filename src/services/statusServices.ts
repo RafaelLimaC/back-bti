@@ -1,6 +1,11 @@
 import { prisma } from '@/config/prisma';
 
-export const createStatusService = async (name: string, acronym: string) => {
+export const createStatusService = async (input: {
+  name: string;
+  acronym: string;
+}) => {
+  const { name, acronym } = input;
+
   if (await prisma.status.findUnique({ where: { name: name } })) {
     throw new Error(`Status ${name} already exists`);
   }
@@ -21,7 +26,12 @@ export const getStatusService = async () => {
   return status;
 };
 
-export const updateStatusService = async (name: string, id: number) => {
+export const updateStatusService = async (input: {
+  name: string;
+  id: number;
+}) => {
+  const { name, id } = input;
+
   if (!(await prisma.status.findUnique({ where: { id } }))) {
     throw new Error('Status not found');
   }

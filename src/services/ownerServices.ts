@@ -1,6 +1,11 @@
 import { prisma } from '@/config/prisma';
 
-export const createOwnerService = async (name: string, role: string) => {
+export const createOwnerService = async (input: {
+  name: string;
+  role: string;
+}) => {
+  const { name, role } = input;
+
   const newOwner = await prisma.owner.create({
     data: {
       name,
@@ -17,11 +22,13 @@ export const getOwnerService = async () => {
   return owner;
 };
 
-export const updateOwnerService = async (
-  name: string,
-  role: string,
-  id: number,
-) => {
+export const updateOwnerService = async (input: {
+  name: string;
+  role: string;
+  id: number;
+}) => {
+  const { name, role, id } = input;
+
   if (!(await prisma.owner.findUnique({ where: { id } }))) {
     throw new Error('Owner not found');
   }

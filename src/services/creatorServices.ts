@@ -1,10 +1,12 @@
 import { prisma } from '@/config/prisma';
 
-export const createCreatorService = async (
-  name: string,
-  role: string | undefined,
-  sectorId: number,
-) => {
+export const createCreatorService = async (input: {
+  name: string;
+  role: string | undefined;
+  sectorId: number;
+}) => {
+  const { name, role, sectorId } = input;
+
   const newCreator = await prisma.creator.create({
     data: {
       name,
@@ -35,12 +37,14 @@ export const getCreatorsService = async () => {
   return creator;
 };
 
-export const updateCreatorService = async (
-  name: string,
-  role: string,
-  sectorId: number,
-  id: number,
-) => {
+export const updateCreatorService = async (input: {
+  name: string;
+  role: string;
+  sectorId: number;
+  id: number;
+}) => {
+  const { name, role, sectorId, id } = input;
+
   if (!(await prisma.creator.findUnique({ where: { id } }))) {
     throw new Error('Creator not found');
   }

@@ -1,12 +1,14 @@
 import { prisma } from '@/config/prisma';
 
-export const createTicketService = async (
-  title: string,
-  description: string,
-  statusId: number,
-  ownerId: number,
-  creatorId: number,
-) => {
+export const createTicketService = async (input: {
+  title: string;
+  description: string;
+  statusId: number;
+  ownerId: number;
+  creatorId: number;
+}) => {
+  const { title, description, statusId, ownerId, creatorId } = input;
+
   const statusExists = await prisma.status.findUnique({
     where: { id: Number(statusId) },
   });
@@ -92,14 +94,16 @@ export const getTicketByStatusService = async (statusId: number) => {
   return tickets;
 };
 
-export const updateTicketService = async (
-  title: string,
-  description: string,
-  statusId: number,
-  ticketId: number,
-  ownerId: number,
-  creatorId: number,
-) => {
+export const updateTicketService = async (input: {
+  title: string;
+  description: string;
+  statusId: number;
+  ticketId: number;
+  ownerId: number;
+  creatorId: number;
+}) => {
+  const { title, description, statusId, ticketId, ownerId, creatorId } = input;
+
   if (!(await prisma.ticket.findUnique({ where: { id: ticketId } }))) {
     throw new Error('Ticket id not found');
   }

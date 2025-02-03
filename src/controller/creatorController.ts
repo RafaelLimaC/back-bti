@@ -7,7 +7,7 @@ import {
   updateCreatorService,
 } from '@/services/creatorServices';
 
-const createCreator = async (
+export const createCreator = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
@@ -16,11 +16,11 @@ const createCreator = async (
       return res.status(422).json({ error: 'Name is required' });
     }
 
-    const response = await createCreatorService(
-      req.body.name,
-      req.body.role,
-      req.body.sectorId,
-    );
+    const response = await createCreatorService({
+      name: req.body.name,
+      role: req.body.role,
+      sectorId: req.body.sectorId,
+    });
 
     return res.status(201).json(response);
   } catch (error) {
@@ -28,7 +28,10 @@ const createCreator = async (
   }
 };
 
-const getCreator = async (req: Request, res: Response): Promise<Response> => {
+export const getCreator = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     const response = await getCreatorsService();
 
@@ -38,17 +41,17 @@ const getCreator = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-const updateCreator = async (
+export const updateCreator = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
   try {
-    const response = await updateCreatorService(
-      req.body.name,
-      req.body.role,
-      req.body.sectorId,
-      Number(req.params.id),
-    );
+    const response = await updateCreatorService({
+      name: req.body.name,
+      role: req.body.role,
+      sectorId: req.body.sectorId,
+      id: Number(req.params.id),
+    });
 
     return res.status(200).json(response);
   } catch (error) {
@@ -56,7 +59,7 @@ const updateCreator = async (
   }
 };
 
-const deleteCreator = async (
+export const deleteCreator = async (
   req: Request,
   res: Response,
 ): Promise<Response> => {
@@ -68,5 +71,3 @@ const deleteCreator = async (
     return res.status(500).json({ error });
   }
 };
-
-export { createCreator, deleteCreator, getCreator, updateCreator };

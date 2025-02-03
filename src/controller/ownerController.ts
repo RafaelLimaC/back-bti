@@ -7,13 +7,19 @@ import {
   updateOwnerService,
 } from '@/services/ownerServices';
 
-const createOwner = async (req: Request, res: Response): Promise<Response> => {
+export const createOwner = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     if (!req.body.name) {
       return res.status(422).json({ error: 'Name is required' });
     }
 
-    const response = await createOwnerService(req.body.name, req.body.role);
+    const response = await createOwnerService({
+      name: req.body.name,
+      role: req.body.role,
+    });
 
     return res.status(201).json(response);
   } catch (error) {
@@ -21,7 +27,10 @@ const createOwner = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-const getOwner = async (req: Request, res: Response): Promise<Response> => {
+export const getOwner = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     const response = await getOwnerService();
 
@@ -31,13 +40,16 @@ const getOwner = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-const updateOwner = async (req: Request, res: Response): Promise<Response> => {
+export const updateOwner = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
-    const response = await updateOwnerService(
-      req.body.name,
-      req.body.role,
-      Number(req.params.id),
-    );
+    const response = await updateOwnerService({
+      name: req.body.name,
+      role: req.body.role,
+      id: Number(req.params.id),
+    });
 
     return res.status(200).json(response);
   } catch (error) {
@@ -45,7 +57,10 @@ const updateOwner = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-const deleteOwner = async (req: Request, res: Response): Promise<Response> => {
+export const deleteOwner = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
   try {
     await deleteOwnerService(Number(req.params.id));
 
@@ -54,5 +69,3 @@ const deleteOwner = async (req: Request, res: Response): Promise<Response> => {
     return res.status(500).json({ error });
   }
 };
-
-export { createOwner, deleteOwner, getOwner, updateOwner };
