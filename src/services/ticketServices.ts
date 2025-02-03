@@ -1,5 +1,46 @@
 import { prisma } from '@/config/prisma';
 
+const createTicketOwnerData = (ownerId: number | number[]) => {
+  if (Array.isArray(ownerId)) {
+    return { create: ownerId.map((id) => ({ ownerId: id })) };
+  } else if (ownerId) {
+    return { create: [{ ownerId }] };
+  }
+  return undefined;
+};
+
+const createTicketCreatorData = (creatorId: number | number[]) => {
+  if (Array.isArray(creatorId)) {
+    return { create: creatorId.map((id) => ({ creatorId: id })) };
+  } else if (creatorId) {
+    return { create: [{ creatorId }] };
+  }
+  return undefined;
+};
+
+const includeCreatorOwner = {
+  TicketOwner: {
+    include: {
+      Owner: {
+        select: {
+          name: true,
+          role: true,
+        },
+      },
+    },
+  },
+  TicketCreator: {
+    include: {
+      Creator: {
+        select: {
+          name: true,
+          role: true,
+        },
+      },
+    },
+  },
+};
+
 export const createTicketService = async (input: {
   title: string;
   description: string;
@@ -21,24 +62,13 @@ export const createTicketService = async (input: {
     title,
     description,
     statusId: Number(statusId),
-    TicketOwner: Array.isArray(ownerId)
-      ? { create: ownerId.map((id) => ({ ownerId: id })) }
-      : ownerId
-        ? { create: [{ ownerId }] }
-        : undefined,
-    TicketCreator: Array.isArray(creatorId)
-      ? { create: creatorId.map((id) => ({ creatorId: id })) }
-      : creatorId
-        ? { create: [{ creatorId }] }
-        : undefined,
+    TicketOwner: createTicketOwnerData(ownerId),
+    TicketCreator: createTicketCreatorData(creatorId),
   };
 
   const newTicket = await prisma.ticket.create({
     data: ticketData,
-    include: {
-      TicketOwner: true,
-      TicketCreator: true,
-    },
+    include: includeCreatorOwner,
   });
 
   return newTicket;
@@ -46,10 +76,7 @@ export const createTicketService = async (input: {
 
 export const getTicketsService = async () => {
   const tickets = await prisma.ticket.findMany({
-    include: {
-      TicketOwner: true,
-      TicketCreator: true,
-    },
+    include: includeCreatorOwner,
   });
 
   return tickets;
@@ -60,10 +87,7 @@ export const getTicketByIdService = async (id: number) => {
     where: {
       id: id,
     },
-    include: {
-      TicketOwner: true,
-      TicketCreator: true,
-    },
+    include: includeCreatorOwner,
   });
 
   if (!ticket) {
@@ -82,10 +106,25 @@ export const getTicketByStatusService = async (statusId: number) => {
     where: {
       statusId: statusId,
     },
-    include: {
-      TicketOwner: true,
-      TicketCreator: true,
+    include: includeCreatorOwner,
+    orderBy: {
+      createdAt: 'desc',
     },
+  });
+
+  return tickets;
+};
+
+export const getTicketByCreatorService = async (creatorId: number) => {
+  const tickets = await prisma.ticket.findMany({
+    where: {
+      TicketCreator: {
+        some: {
+          creatorId: creatorId,
+        },
+      },
+    },
+    include: includeCreatorOwner,
     orderBy: {
       createdAt: 'desc',
     },
@@ -151,10 +190,7 @@ export const updateTicketService = async (input: {
           }
         : undefined,
     },
-    include: {
-      TicketOwner: true,
-      TicketCreator: true,
-    },
+    include: includeCreatorOwner,
   });
 
   return updatedTicket;

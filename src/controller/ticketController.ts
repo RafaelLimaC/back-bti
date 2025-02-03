@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import {
   createTicketService,
   deleteTicketService,
+  getTicketByCreatorService,
   getTicketByIdService,
   getTicketByStatusService,
   getTicketsService,
@@ -65,6 +66,21 @@ export const getTicketByStatus = async (
   try {
     const response = await getTicketByStatusService(
       Number(req.params.statusId),
+    );
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const getTicketByCreator = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
+  try {
+    const response = await getTicketByCreatorService(
+      Number(req.params.creatorId),
     );
 
     return res.status(200).json(response);
