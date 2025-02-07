@@ -39,3 +39,21 @@ export const getCommentsService = async (ticketId: number) => {
 
   return comments;
 };
+
+export const updateCommentService = async (input: {
+  content: string;
+  id: number;
+}) => {
+  const { content, id } = input;
+
+  const updatedComment = await prisma.comment.update({
+    data: {
+      content,
+    },
+    where: {
+      id,
+    },
+  });
+
+  return updatedComment;
+};
