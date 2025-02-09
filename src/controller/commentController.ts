@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 
 import {
   createCommentService,
+  deleteCommentService,
   getCommentsService,
   updateCommentService,
 } from '@/services/commentServices';
@@ -55,6 +56,23 @@ export const updateComment = async (
     });
 
     return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+};
+
+export const deleteComment = async (
+  req: Request,
+  res: Response,
+): Promise<Response> => {
+  try {
+    if (!req.params.id) {
+      return res.status(422).json({ error: 'Id is required' });
+    }
+
+    await deleteCommentService(Number(req.params.id));
+
+    return res.status(204).send();
   } catch (error) {
     return res.status(500).json({ error });
   }
