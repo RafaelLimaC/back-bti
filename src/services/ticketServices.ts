@@ -133,6 +133,9 @@ export const getTicketByCreatorService = async (creatorId: number) => {
   return tickets;
 };
 
+// arrumar o edit dos tickets (não dá pra remover owners e creators atualmente)
+// vou ter q ler todos os creators owners que tem, comparar com os que os q ele passou, remover/adicionar os novos
+// update se passar alguma coisa pega o valor passado, se não fica o atual do banco
 export const updateTicketService = async (input: {
   title: string;
   description: string;

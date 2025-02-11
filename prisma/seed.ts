@@ -1,14 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 
+import { StatusEnum } from '../src/enums/statusEnum';
+
 const prisma = new PrismaClient();
 
 async function main() {
   await prisma.status.createMany({
     data: [
-      { name: 'Não iniciado', acronym: 'NOT_STARTED' },
-      { name: 'Em andamento', acronym: 'IN_PROGRESS' },
-      { name: 'Concluído', acronym: 'COMPLETED' },
-      { name: 'Bloqueado', acronym: 'BLOCKED' },
+      { name: 'Não iniciado', acronym: StatusEnum.NOT_STARTED },
+      { name: 'Em andamento', acronym: StatusEnum.IN_PROGRESS },
+      { name: 'Concluído', acronym: StatusEnum.COMPLETED },
+      { name: 'Bloqueado', acronym: StatusEnum.BLOCKED },
     ],
   });
 

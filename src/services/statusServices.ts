@@ -1,75 +1,73 @@
 import { prisma } from '@/config/prisma';
 
-export const createStatusService = async (input: {
-  name: string;
-  acronym: string;
-}) => {
-  const { name, acronym } = input;
+export class StatusService {
+  constructor() {}
 
-  if (await prisma.status.findUnique({ where: { name: name } })) {
-    throw new Error(`Status ${name} already exists`);
+  async createStatus(input: { name: string; acronym: string }) {
+    const { name, acronym } = input;
+
+    if (await prisma.status.findUnique({ where: { name: name } })) {
+      throw new Error(`Status ${name} already exists`);
+    }
+
+    const newStatus = await prisma.status.create({
+      data: {
+        name: name,
+        acronym: acronym,
+      },
+    });
+
+    return newStatus;
   }
 
-  const newStatus = await prisma.status.create({
-    data: {
-      name: name,
-      acronym: acronym,
-    },
-  });
+  async getStatus() {
+    const status = await prisma.status.findMany();
 
-  return newStatus;
-};
-
-export const getStatusService = async () => {
-  const status = await prisma.status.findMany();
-
-  return status;
-};
-
-export const updateStatusService = async (input: {
-  name: string;
-  id: number;
-}) => {
-  const { name, id } = input;
-
-  if (!(await prisma.status.findUnique({ where: { id } }))) {
-    throw new Error('Status not found');
+    return status;
   }
 
-  if (await prisma.status.findUnique({ where: { name } })) {
-    throw new Error(`Status ${name} already exists`);
+  async updateStatus(input: { name: string; id: number }) {
+    const { name, id } = input;
+
+    if (!(await prisma.status.findUnique({ where: { id } }))) {
+      throw new Error('Status not found');
+    }
+
+    if (await prisma.status.findUnique({ where: { name } })) {
+      throw new Error(`Status ${name} already exists`);
+    }
+
+    const updatedStatus = await prisma.status.update({
+      data: {
+        name,
+      },
+      where: {
+        id,
+      },
+    });
+
+    return updatedStatus;
   }
 
-  const updatedStatus = await prisma.status.update({
-    data: {
-      name,
-    },
-    where: {
-      id,
-    },
-  });
+  async deleteStatus(id: number) {
+    if (!(await prisma.status.findUnique({ where: { id } }))) {
+      throw new Error('Status not found');
+    }
 
-  return updatedStatus;
-};
+    const statusCount = await prisma.ticket.count({
+      where: {
+        statusId: id,
+      },
+    });
 
-export const deleteStatusService = async (id: number) => {
-  if (!(await prisma.status.findUnique({ where: { id } }))) {
-    throw new Error('Status not found');
+    if (statusCount > 0) {
+      throw new Error(`Status is being used in ${statusCount} tickets.`);
+    }
+
+    await prisma.status.delete({
+      where: {
+        id: id,
+      },
+    });
   }
-
-  const statusCount = await prisma.ticket.count({
-    where: {
-      statusId: id,
-    },
-  });
-
-  if (statusCount > 0) {
-    throw new Error(`Status is being used in ${statusCount} tickets.`);
-  }
-
-  await prisma.status.delete({
-    where: {
-      id: id,
-    },
-  });
-};
+}
