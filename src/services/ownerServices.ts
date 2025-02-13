@@ -47,7 +47,9 @@ export const updateOwnerService = async (input: {
 };
 
 export const deleteOwnerService = async (id: number) => {
-  if (!(await prisma.owner.findUnique({ where: { id } }))) {
+  const ownerExists = await prisma.owner.findUnique({ where: { id } });
+
+  if (!ownerExists) {
     throw new Error('Owner not found');
   }
 

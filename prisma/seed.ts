@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-import { StatusEnum } from '../src/enums/statusEnum';
+import { StatusEnum } from '@/enums/statusEnum';
 
 const prisma = new PrismaClient();
 

@@ -98,7 +98,11 @@ export const getTicketByIdService = async (id: number) => {
 };
 
 export const getTicketByStatusService = async (statusId: number) => {
-  if (!(await prisma.status.findUnique({ where: { id: statusId } }))) {
+  const statusExists = await prisma.status.findUnique({
+    where: { id: Number(statusId) },
+  });
+
+  if (!statusExists) {
     throw new Error('Status id not found');
   }
 
@@ -146,7 +150,11 @@ export const updateTicketService = async (input: {
 }) => {
   const { title, description, statusId, ticketId, ownerId, creatorId } = input;
 
-  if (!(await prisma.ticket.findUnique({ where: { id: ticketId } }))) {
+  const ticketExists = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+  });
+
+  if (!ticketExists) {
     throw new Error('Ticket id not found');
   }
 

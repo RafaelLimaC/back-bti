@@ -70,7 +70,9 @@ export const updateCreatorService = async (input: {
 };
 
 export const deleteCreatorService = async (id: number) => {
-  if (!(await prisma.creator.findUnique({ where: { id } }))) {
+  const creatorExists = await prisma.creator.findUnique({ where: { id } });
+
+  if (!creatorExists) {
     throw new Error('Creator not found');
   }
 

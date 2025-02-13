@@ -29,11 +29,17 @@ export class StatusService {
   async updateStatus(input: { name: string; id: number }) {
     const { name, id } = input;
 
-    if (!(await prisma.status.findUnique({ where: { id } }))) {
+    const statusExists = await prisma.status.findUnique({ where: { id } });
+
+    if (!statusExists) {
       throw new Error('Status not found');
     }
 
-    if (await prisma.status.findUnique({ where: { name } })) {
+    const statusNameExists = await prisma.status.findUnique({
+      where: { name },
+    });
+
+    if (statusNameExists) {
       throw new Error(`Status ${name} already exists`);
     }
 
@@ -50,7 +56,9 @@ export class StatusService {
   }
 
   async deleteStatus(id: number) {
-    if (!(await prisma.status.findUnique({ where: { id } }))) {
+    const statusExists = await prisma.status.findUnique({ where: { id } });
+
+    if (!statusExists) {
       throw new Error('Status not found');
     }
 
