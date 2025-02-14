@@ -1,71 +1,66 @@
 import type { Request, Response } from 'express';
 
-import {
-  createOwnerService,
-  deleteOwnerService,
-  getOwnerService,
-  updateOwnerService,
-} from '@/services/ownerServices';
+import { OwnerService } from '@/services/ownerServices';
 
-export const createOwner = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    if (!req.body.name) {
-      return res.status(422).json({ error: 'Name is required' });
+export class OwnerController {
+  constructor(private ownerService: OwnerService) {}
+
+  async createOwner(req: Request, res: Response): Promise<Response> {
+    try {
+      if (!req.body.name) {
+        return res.status(422).json({ error: 'Name is required' });
+      }
+
+      const ownerService = new OwnerService();
+
+      const response = await ownerService.createOwner({
+        name: req.body.name,
+        role: req.body.role,
+      });
+
+      return res.status(201).json(response);
+    } catch (error) {
+      return res.status(500).json({ error });
     }
-
-    const response = await createOwnerService({
-      name: req.body.name,
-      role: req.body.role,
-    });
-
-    return res.status(201).json(response);
-  } catch (error) {
-    return res.status(500).json({ error });
   }
-};
 
-export const getOwner = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    const response = await getOwnerService();
+  async getOwner(req: Request, res: Response): Promise<Response> {
+    try {
+      const ownerService = new OwnerService();
 
-    return res.status(200).json(response);
-  } catch (error) {
-    return res.status(500).json({ error });
+      const response = await ownerService.getOwner();
+
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
   }
-};
 
-export const updateOwner = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    const response = await updateOwnerService({
-      name: req.body.name,
-      role: req.body.role,
-      id: Number(req.params.id),
-    });
+  async updateOwner(req: Request, res: Response): Promise<Response> {
+    try {
+      const ownerService = new OwnerService();
 
-    return res.status(200).json(response);
-  } catch (error) {
-    return res.status(500).json({ error });
+      const response = await ownerService.updateOwner({
+        name: req.body.name,
+        role: req.body.role,
+        id: Number(req.params.id),
+      });
+
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
   }
-};
 
-export const deleteOwner = async (
-  req: Request,
-  res: Response,
-): Promise<Response> => {
-  try {
-    await deleteOwnerService(Number(req.params.id));
+  async deleteOwner(req: Request, res: Response): Promise<Response> {
+    try {
+      const ownerService = new OwnerService();
 
-    return res.status(204).send();
-  } catch (error) {
-    return res.status(500).json({ error });
+      await ownerService.deleteOwner(Number(req.params.id));
+
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
   }
-};
+}
