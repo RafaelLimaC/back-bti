@@ -1,17 +1,21 @@
 import { Router } from 'express';
 
-import {
-  createComment,
-  deleteComment,
-  getComments,
-  updateComment,
-} from '@/controller/commentController';
+import { commentControllerFactory } from './factories/commentControllerFactory';
 
 const commentRouter = Router();
+const commentController = commentControllerFactory();
 
-commentRouter.post('/', createComment);
-commentRouter.get('/:ticketId', getComments);
-commentRouter.put('/:id', updateComment);
-commentRouter.delete('/:id', deleteComment);
+commentRouter.post('/', (req, res) =>
+  commentController.createComment(req, res),
+);
+commentRouter.get('/:ticketId', (req, res) =>
+  commentController.getComments(req, res),
+);
+commentRouter.put('/:id', (req, res) =>
+  commentController.updateComment(req, res),
+);
+commentRouter.delete('/:id', (req, res) =>
+  commentController.deleteComment(req, res),
+);
 
 export { commentRouter };
