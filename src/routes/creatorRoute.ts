@@ -1,17 +1,19 @@
 import { Router } from 'express';
 
-import {
-  createCreator,
-  deleteCreator,
-  getCreator,
-  updateCreator,
-} from '@/controller/creatorController';
+import { creatorControllerFactory } from '@/routes/factories/creatorControllerFactory';
 
 const creatorRouter = Router();
+const creatorController = creatorControllerFactory();
 
-creatorRouter.post('/', createCreator);
-creatorRouter.get('/', getCreator);
-creatorRouter.put('/:id', updateCreator);
-creatorRouter.delete('/:id', deleteCreator);
+creatorRouter.post('/', (req, res) =>
+  creatorController.createCreator(req, res),
+);
+creatorRouter.get('/', (req, res) => creatorController.getCreator(req, res));
+creatorRouter.put('/:id', (req, res) =>
+  creatorController.updateCreator(req, res),
+);
+creatorRouter.delete('/:id', (req, res) =>
+  creatorController.deleteCreator(req, res),
+);
 
 export { creatorRouter };
